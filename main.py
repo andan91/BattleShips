@@ -8,14 +8,17 @@ from player import Player
 
 def on_mouse_press(x, y, button, modifiers):
     if button == 1:
-        if player1.board.get_tile_by_pos(x,y) != None:
-            tile = player1.board.get_tile_by_pos(x,y)
-            if tile.is_clickable():
-                if tile.is_hit():
-                    tile.type = "hit"
-                    player1.guess_count+=1
-                elif tile.is_empty():
-                    tile.type = "miss"
+        if player1.turn == True:
+            if player1.board.get_tile_by_pos(x,y) != None:
+                tile = player1.board.get_tile_by_pos(x,y)
+                if tile.is_clickable():
+                    if tile.is_hit():
+                        tile.type = "hit"
+                        player1.guess_count+=1
+                        player1.turn = False
+                    elif tile.is_empty():
+                        tile.type = "miss"
+                        player1.turn = False
 
 
 if __name__ == '__main__':
@@ -40,3 +43,8 @@ if __name__ == '__main__':
         for player in players:
             player.board.draw_board()
         win.flip()
+        if player1.turn == False:
+            if player2.turn_count<100:
+                player2.do_move()
+                player1.turn = True
+                player2.turn_count +=1

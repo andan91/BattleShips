@@ -37,6 +37,10 @@ class Tile(object):
         if self.type == "ship":
             return True
 
+    def not_checked(self):
+        if self.type == "ship" or self.type == "empty":
+            return True
+
     def is_clickable(self):
         if self.owner == "human":
             return True
