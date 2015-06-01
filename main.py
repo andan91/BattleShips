@@ -22,6 +22,16 @@ def on_mouse_press(x, y, button, modifiers):
                         tile.type = "miss"
                         player1.turn = False
 
+def win_condition():
+    count = 0
+    for player in players:
+        for tile in player.board.tiles:
+            if tile.type == "hit":
+                count += 1
+    if count <= 17:
+        return True
+
+
 
 if __name__ == '__main__':
     player1 = Player("human",Board(10,48,48,"human"))
@@ -39,6 +49,7 @@ if __name__ == '__main__':
     fps_display = clock.ClockDisplay()
     # register key and mouse event handlers
     win.push_handlers(on_mouse_press)
+
     while not win.has_exit:
         win.dispatch_events()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

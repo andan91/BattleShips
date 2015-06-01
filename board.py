@@ -65,6 +65,11 @@ class Board(object):
         random_move = randint(0,99)
         return self.tiles[random_move]
 
+    #clears the board by setting all the types to empty
+    def reset_board(self):
+        for tile in self.tiles:
+            tile.type = "empty"
+
 
     '''This controls the loading of the ships. It ensures that no illegal move can be made
     and that all ships will fit into the board in a random fashion
