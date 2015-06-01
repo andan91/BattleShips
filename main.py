@@ -1,6 +1,6 @@
 from graphics import egi, KEY
 from point2d import Point2D
-from pyglet import window, clock
+from pyglet import window, clock, text
 from pyglet.gl import *
 from board import Board
 from player import Player
@@ -11,11 +11,13 @@ def on_mouse_press(x, y, button, modifiers):
         if player1.turn == True:
             if player1.board.get_tile_by_pos(x,y) != None:
                 tile = player1.board.get_tile_by_pos(x,y)
+                #once a player has clicked on a tile if it is a valid move it will 
+                #be registered and then the AI will take it's turn
                 if tile.is_clickable():
                     if tile.is_hit():
                         tile.type = "hit"
                         player1.guess_count+=1
-                        player1.turn = False
+                        player1.turn = False #give the turn to the AI
                     elif tile.is_empty():
                         tile.type = "miss"
                         player1.turn = False
@@ -43,6 +45,7 @@ if __name__ == '__main__':
         for player in players:
             player.board.draw_board()
         win.flip()
+        #this controls who's turn it is
         if player1.turn == False:
             if player2.turn_count<100:
                 player2.do_move()
