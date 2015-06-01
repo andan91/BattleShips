@@ -30,7 +30,7 @@ if __name__ == '__main__':
     for player in players:
         player.board.load_ships(player.ships)
     # create a pyglet window and set glOptions
-    win = window.Window(width=1140, height=580, vsync=True, resizable=True)
+    win = window.Window(width=1140, height=580, vsync=True, caption = "BattleShips")
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     # needed so that egi knows where to draw

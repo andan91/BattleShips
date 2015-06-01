@@ -37,6 +37,7 @@ class Board(object):
         else:
             egi.text_at_pos(840,550,"AI's Board")
             egi.line_by_pos(Point2D(840,547),Point2D(910,547))
+
         egi.text_at_pos(550,560,"YOUR TURN!")
 
     
