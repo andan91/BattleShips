@@ -69,6 +69,19 @@ class Board(object):
     def reset_board(self):
         for tile in self.tiles:
             tile.type = "empty"
+            egi.text_at_pos(530,540,"Press R to reload the board")
+
+    #check if the board is empty
+    def is_board_empty(self):
+        count = 0
+        for tile in self.tiles:
+            if tile.type != "empty":
+                count +=1
+
+        if count>0:
+            return False
+        else:
+            return True
 
 
     '''This controls the loading of the ships. It ensures that no illegal move can be made
@@ -244,4 +257,20 @@ class Board(object):
                                         tile.radius*2)
             if tile != None:
                 return tile
+    '''------------------------------------------------------------------------------'''
+
+    '''------------------------------------------------------------------------------
+    This is the condition for the board to have been won by either player. Once all the 
+    ships have been hit then the board will reset   
+    ---------------------------------------------------------------------------------'''
+    def win_condition(self):
+        count = 0
+        #check for the winner if there is one
+        for tile in self.tiles:
+            if tile.type == "hit":
+                count += 1
+        if count >= 17:
+            return True
+        else:
+            return False
     '''------------------------------------------------------------------------------'''

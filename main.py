@@ -5,10 +5,10 @@ from pyglet.gl import *
 from board import Board
 from player import Player
 
-
+#handles all mouse clicks
 def on_mouse_press(x, y, button, modifiers):
     if button == 1:
-        if player1.turn == True:
+        if player1.turn == True and player1.board.is_board_empty() == False:
             if player1.board.get_tile_by_pos(x,y) != None:
                 tile = player1.board.get_tile_by_pos(x,y)
                 #once a player has clicked on a tile if it is a valid move it will 
@@ -22,14 +22,13 @@ def on_mouse_press(x, y, button, modifiers):
                         tile.type = "miss"
                         player1.turn = False
 
-def win_condition():
-    count = 0
-    for player in players:
-        for tile in player.board.tiles:
-            if tile.type == "hit":
-                count += 1
-    if count <= 17:
-        return True
+#handles all keyboard button inputs
+def on_key_press(symbol,modifiers):
+    #if they press R, reload all the ships on the board for another game
+    if symbol == KEY.R:
+        for player in players:
+            if player.board.is_board_empty():
+                player.board.load_ships(player.ships)
 
 
 
@@ -49,7 +48,7 @@ if __name__ == '__main__':
     fps_display = clock.ClockDisplay()
     # register key and mouse event handlers
     win.push_handlers(on_mouse_press)
-
+    win.push_handlers(on_key_press)
     while not win.has_exit:
         win.dispatch_events()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -62,3 +61,11 @@ if __name__ == '__main__':
                 player2.do_move()
                 player1.turn = True
                 player2.turn_count +=1
+        #checks the players to see if anyone has won yet
+        for player in players:
+            if player.board.win_condition():
+                #if a player has won then reset the boards of both players 
+                for player in players:
+                    player.board.reset_board()
+                    #sets the turns of each player back to 0
+                    player.turn_count = 0
