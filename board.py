@@ -39,6 +39,7 @@ class Board(object):
             egi.line_by_pos(Point2D(840,547),Point2D(910,547))
 
         egi.text_at_pos(550,560,"YOUR TURN!")
+        egi.text_at_pos(100,600,"Once game has finished press R to reload the boards")
 
     
     #add all the tiles required for the board
@@ -77,8 +78,21 @@ class Board(object):
         for tile in self.tiles:
             if tile.type != "empty":
                 count +=1
-
+        #if there are any tiles that are not listed as "empty" then the board is not empty
         if count>0:
+            return False
+        else:
+            return True
+    #returns a copy of the board class
+    def copy_board(self):
+        return copy(self)
+
+    def no_hits(self):
+        count = 0
+        for tile in self.tiles:
+            if tile.type == "hit":
+                count += 1
+        if count >0:
             return False
         else:
             return True
