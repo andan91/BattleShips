@@ -14,7 +14,11 @@ class Board(object):
         self.owner = owner
         self.position = Point2D(x,y)
         self.tiles = []
+        self.ship_types = ["patrol","sub","sub","battleship","carrier"]
         self.add_tiles(x)
+        self.directions = ['left','right','up','down']
+        self.enemy_ships = [2,3,3,4,5]
+
         
     #draws the board as well as the axes on the board
     def draw_board(self):
@@ -40,6 +44,7 @@ class Board(object):
 
         egi.text_at_pos(550,560,"YOUR TURN!")
         egi.text_at_pos(100,600,"Once game has finished press R to reload the boards")
+        self.draw_ship_text()
 
     
     #add all the tiles required for the board
@@ -70,7 +75,56 @@ class Board(object):
     def reset_board(self):
         for tile in self.tiles:
             tile.type = "empty"
+            tile.color = "GREY"
             egi.text_at_pos(530,540,"Press R to reload the board")
+
+    def draw_ship_text(self):
+        x = 1150
+        if self.owner == "AI": 
+            y = 220
+            egi.text_at_pos(x,y,"Your Ships")
+        else:
+            y = 360
+            egi.text_at_pos(x,y,"Computer's ships")
+
+        #patrol text
+        if self.enemy_ships.count(2) == 1:
+            egi.text_at_pos(x,y-20,"Ship: Patrol")
+        else:
+            egi.set_pen_color(name = "RED")
+            egi.line_by_pos(Point2D(x,y-20+5),Point2D(x+90,y-20+5))
+            egi.text_at_pos(x,y-20,"Ship: Destroyed")
+
+        #submarine text
+        if self.enemy_ships.count(3) == 2:
+            egi.text_at_pos(x,y-40,"Ship: Submarine ")  
+        else:
+            egi.set_pen_color(name = "RED")
+            egi.line_by_pos(Point2D(x,y-40+5),Point2D(x+90,y-40+5))
+            egi.text_at_pos(x,y-40,"Ship: Destroyed")
+        #destoyer text
+        if self.enemy_ships.count(3) == 2 or self.enemy_ships.count(3) == 1 :
+                egi.text_at_pos(x,y-60,"Ship: Destroyer ")
+        else:
+            egi.set_pen_color(name = "RED")
+            egi.line_by_pos(Point2D(x,y-60+5),Point2D(x+90,y-60+5))
+            egi.text_at_pos(x,y-40,"Ship: Destroyed")
+        #battleship text
+        if self.enemy_ships.count(4) == 1:
+            egi.text_at_pos(x,y-80,"Ship: Battleship")
+        else:
+            egi.set_pen_color(name = "RED")
+            egi.line_by_pos(Point2D(x,y-80+5),Point2D(x+90,y-80+5))
+            egi.text_at_pos(x,y-80,"Ship: Destroyed") 
+
+        #carrier text
+        if self.enemy_ships.count(5) == 1:
+            egi.text_at_pos(x,y-100,"Ship: Aircraft Carrier")
+        else:
+            egi.set_pen_color(name = "RED")
+            egi.line_by_pos(Point2D(x,y-100+5),Point2D(x+90,y-100+5))
+            egi.text_at_pos(x,y-100,"Ship: Destroyed") 
+          
 
     #check if the board is empty
     def is_board_empty(self):
@@ -102,7 +156,8 @@ class Board(object):
     and that all ships will fit into the board in a random fashion
     Uses the spawn ship for each of the players ships'''
     def load_ships(self,ships):
-        for x in range(len(ships)):
+        for x in range(0,len(ships)):
+            sub_count = 0
             move = None
             tiles = []
             #loop until a good location is found
@@ -121,6 +176,19 @@ class Board(object):
 
             for tile in tiles:
                 tile.type = "ship"
+                
+                if len(tiles)-1 == 2:
+                    tile.ship_type = "patrol"
+                if sub_count == 1:
+                    tile.ship_type = "destroyer"
+                if len(tiles)-1 == 3:
+                    tile.ship_type = "sub"
+                    sub_count += 1
+                if len(tiles)-1 == 4:
+                    tile.ship_type = "battleship"
+                if len(tiles)-1 == 5:
+                    tile.ship_type = "carrier"
+                
 
   
 
@@ -147,7 +215,7 @@ class Board(object):
                     #horizontal check right
                     if self.is_empty_right(temp_tile):
                         ship_location.append(temp_tile)
-                        temp_tile = self.get_adjactent_tile(temp_tile,"right")
+                        temp_tile = self.get_adjactent_tile(temp_tile,"right",1)
                         count += 1
                     else:
                         ship_location.clear()
@@ -159,9 +227,9 @@ class Board(object):
                         count +=1
                         break     
                     #horizontal check left
-                    if self.is_empty_left(temp_tile):
+                    if self.is_empty_up(temp_tile):
                         ship_location.append(temp_tile)
-                        temp_tile = self.get_adjactent_tile(temp_tile,"left")
+                        temp_tile = self.get_adjactent_tile(temp_tile,"up",1)
                         count += 1
                     else:
                         ship_location.clear()
@@ -173,9 +241,9 @@ class Board(object):
                         count +=1
                         break     
                     #vertical check up
-                    if self.is_empty_up(temp_tile):
+                    if self.is_empty_left(temp_tile):
                         ship_location.append(temp_tile)
-                        temp_tile = self.get_adjactent_tile(temp_tile,"up")
+                        temp_tile = self.get_adjactent_tile(temp_tile,"left",1)
                         count += 1
                     else:
                         ship_location.clear()
@@ -189,7 +257,7 @@ class Board(object):
                     #vertical check down
                     if self.is_empty_up(temp_tile):
                         ship_location.append(temp_tile)
-                        temp_tile = self.get_adjactent_tile(temp_tile,"down")
+                        temp_tile = self.get_adjactent_tile(temp_tile,"down",1)
                         count += 1
                     else:
                         ship_location.clear()
@@ -245,30 +313,30 @@ class Board(object):
 
     '''Following functions return the adjacent tile in all directions of the given tile
     ---------------------------------------------------------------------------------'''
-    def get_adjactent_tile(self,tile,direction):
+    def get_adjactent_tile(self,tile,direction,depth):
         #returns the tile on the right
         if direction == "right":
-            tile = self.get_tile_by_pos(tile.position.x + tile.radius*2,tile.position.y)
+            tile = self.get_tile_by_pos(tile.position.x + tile.radius*(1+depth),tile.position.y)
             if tile != None:
                 return tile
 
         #returns the tile on the left
         if direction == "left":
-            tile = self.get_tile_by_pos(tile.position.x - tile.radius*2,tile.position.y)
+            tile = self.get_tile_by_pos(tile.position.x - tile.radius*(1+depth),tile.position.y)
             if tile != None:
                 return tile
 
         #returns the tile above
         if direction == "up":
             tile = self.get_tile_by_pos(tile.position.x, tile.position.y +
-                                        tile.radius*2)
+                                        tile.radius*(1+depth))
             if tile != None:
                 return tile
 
         #returns the tile below 
         if direction == "down":
             tile = self.get_tile_by_pos(tile.position.x, tile.position.y -
-                                        tile.radius*2)
+                                        tile.radius*(1+depth))
             if tile != None:
                 return tile
     '''------------------------------------------------------------------------------'''
@@ -288,3 +356,83 @@ class Board(object):
         else:
             return False
     '''------------------------------------------------------------------------------'''
+
+    
+    '''------------------------------------------------------------------------------
+    This checks for the condition of whether a certain ship has been sunk and then 
+    returns true if it has been, letting the players know that the certain ship has been
+    sunk
+    ---------------------------------------------------------------------------------'''
+    def sunk_ship(self,shipLength,shipType):
+        sink_count = 0
+        for tile in self.tiles:
+            if tile.type == "hit":
+                #adds to the count to check if a certain ship has been sunk
+                if tile.ship_type == shipType:
+                    sink_count += 1
+        if sink_count == shipLength:
+            return True
+        else:
+            return False
+    '''------------------------------------------------------------------------------'''
+
+    '''Following are checks for missed tiles around a certain tile
+    ------------------------------------------------------------------------'''
+    #check right
+    def is_miss_right(self,tile):
+        potential_tile = self.get_tile_by_pos(tile.position.x+tile.radius*2,
+                                              tile.position.y)
+        if potential_tile != None:
+            if potential_tile.is_miss():
+                return True
+    
+    #check left
+    def is_miss_left(self,tile):
+        potential_tile = self.get_tile_by_pos(tile.position.x-tile.radius*2,
+                                              tile.position.y)
+        if potential_tile != None:
+            if potential_tile.is_miss():
+                return True
+
+    #check above
+    def is_miss_up(self,tile):
+        potential_tile = self.get_tile_by_pos(tile.position.x,
+                                              tile.position.y + tile.radius*2)
+        if potential_tile != None:
+            if potential_tile.is_miss():
+                return True
+
+    #check below
+    def is_miss_down(self,tile):
+        potential_tile = self.get_tile_by_pos(tile.position.x,
+                                              tile.position.y - tile.radius*2)
+        if potential_tile != None:
+            if potential_tile.is_miss():
+                return True
+    '''------------------------------------------------------------------------'''
+
+    #checks to see whether the tile is surrounded
+    def is_surrounded(self,tile):
+        if self.is_miss_right(tile) and self.is_miss_left(tile) and self.is_miss_up(tile) and self.is_miss_down(tile):
+            return True
+
+    def update_enemy_ships(self):
+        if self.enemy_ships.count(2) == 1 and self.sunk_ship(2,"patrol") == True:
+            egi.text_at_pos(530,520,"You have sunk the enemies patrol")
+            self.enemy_ships.remove(2)
+        if self.enemy_ships.count(3) == 2 and self.sunk_ship(3,"sub") == True:
+            egi.text_at_pos(530,520,"You have sunk the enemies sub")
+            self.enemy_ships.remove(3)
+        if self.enemy_ships.count(3) == 1 and self.sunk_ship(3,"destroyer") == True:
+            egi.text_at_pos(530,520,"You have sunk the enemies second sub")
+            self.enemy_ships.remove(3)
+        if self.enemy_ships.count(4) == 1 and self.sunk_ship(4,"battleship") == True:
+            egi.text_at_pos(530,520,"You have sunk the enemies battleship")
+            self.enemy_ships.remove(4)
+        if self.enemy_ships.count(5) == 1 and self.sunk_ship(5,"carrier") == True:
+            egi.text_at_pos(530,520,"You have sunk the enemies carrier")
+            self.enemy_ships.remove(5)
+
+    
+
+
