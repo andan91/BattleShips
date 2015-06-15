@@ -156,8 +156,9 @@ class Board(object):
     and that all ships will fit into the board in a random fashion
     Uses the spawn ship for each of the players ships'''
     def load_ships(self,ships):
+        sub_count = 0
         for x in range(0,len(ships)):
-            sub_count = 0
+            
             move = None
             tiles = []
             #loop until a good location is found
@@ -179,11 +180,13 @@ class Board(object):
                 
                 if len(tiles)-1 == 2:
                     tile.ship_type = "patrol"
-                if sub_count == 1:
-                    tile.ship_type = "destroyer"
                 if len(tiles)-1 == 3:
-                    tile.ship_type = "sub"
-                    sub_count += 1
+                    if sub_count == 1:
+                        tile.ship_type = "destroyer"
+                if len(tiles)-1 == 3:
+                    if sub_count == 0:
+                        tile.ship_type = "sub"
+                        sub_count += 1
                 if len(tiles)-1 == 4:
                     tile.ship_type = "battleship"
                 if len(tiles)-1 == 5:

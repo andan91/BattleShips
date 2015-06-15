@@ -32,16 +32,16 @@ class Tile(object):
             --------------------------------------------------------------------------
             ENABLE THIS IF YOU WISH TO SEE THE TILES OF THE SHIPS AS THEY ARE REVEALED
             -----------------------------------------------------------------------'''
-            if self.ship_type == "patrol":
-                self.color = "PINK"
-            elif self.ship_type == "sub":
-                self.color = "YELLOW"
-            elif self.ship_type == "destroyer":
-                self.color = "RED"
-            elif self.ship_type == "battleship":
-                self.color = "BLACK"
-            elif self.ship_type == "carrier":
-                self.color = "GREEN"
+            #if self.ship_type == "patrol":
+            #    self.color = "PINK"
+            #elif self.ship_type == "sub":
+            #    self.color = "YELLOW"
+            #elif self.ship_type == "destroyer":
+            #    self.color = "RED"
+            #elif self.ship_type == "battleship":
+            #    self.color = "BLACK"
+            #elif self.ship_type == "carrier":
+            #    self.color = "GREEN"
 
         #if the tile was hit but missed
         if self.type == "miss":
