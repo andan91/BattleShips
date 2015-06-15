@@ -31,9 +31,8 @@ class Player(object):
         return random_move
 
     def get_predicted_move(self):
-        board = self.board
         highest_value = None
-        if board.no_hits():
+        if self.board.no_hits():
             return self.get_random_move()
         else:
             for tile in self.board.tiles:
@@ -49,15 +48,19 @@ class Player(object):
 
                         
     def check_adjacent_tiles(self,tile):
-        board = self.board
-        if board.get_adjactent_tile(tile,"right").not_checked():
-            return board.get_adjactent_tile(tile,"right")
-        if board.get_adjactent_tile(tile,"left").not_checked():
-            return board.get_adjactent_tile(tile,"left")
-        if board.get_adjactent_tile(tile,"up").not_checked():
-            return board.get_adjactent_tile(tile,"up")
-        if board.get_adjactent_tile(tile,"down").not_checked():
-            return board.get_adjactent_tile(tile,"down")
+        if tile != None:
+            temp_tile = self.board.get_adjactent_tile(tile,"right")
+            if temp_tile != None and temp_tile.not_checked():
+                return self.board.get_adjactent_tile(tile,"right")
+            temp_tile = self.board.get_adjactent_tile(tile,"left")
+            if temp_tile != None and temp_tile.not_checked():
+                return self.board.get_adjactent_tile(tile,"left")
+            temp_tile = self.board.get_adjactent_tile(tile,"up")
+            if temp_tile != None and temp_tile.not_checked():
+                return self.board.get_adjactent_tile(tile,"up")
+            temp_tile = self.board.get_adjactent_tile(tile,"down")
+            if temp_tile != None and temp_tile.not_checked():
+                return self.board.get_adjactent_tile(tile,"down")
 
 
                                 
